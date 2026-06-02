@@ -25,7 +25,7 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.actions import PushRosNamespace
 from launch_ros.descriptions import ParameterFile
-from nav2_common.launch import ReplaceString, RewrittenYaml
+from nav2_common.launch import RewrittenYaml, ReplaceString
 
 
 def generate_launch_description():
@@ -54,10 +54,21 @@ def generate_launch_description():
     remappings = [('/tf', 'tf'),
                   ('/tf_static', 'tf_static')]
 
+    como_bt_xml = os.path.join(
+        bringup_dir, 'params', 'como_navigate_to_pose.xml')
+    bt_navigator_dir = get_package_share_directory('nav2_bt_navigator')
+    nav_through_poses_bt_xml = os.path.join(
+        bt_navigator_dir, 'behavior_trees',
+        'navigate_through_poses_w_replanning_and_recovery.xml')
+
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
         'use_sim_time': use_sim_time,
-        'yaml_filename': map_yaml_file}
+        'yaml_filename': map_yaml_file,
+        'bt_navigator.ros__parameters.default_nav_to_pose_bt_xml': como_bt_xml,
+        'bt_navigator.ros__parameters.default_nav_through_poses_bt_xml':
+            nav_through_poses_bt_xml,
+    }
 
     # Only it applys when `use_namespace` is True.
     # '<robot_namespace>' keyword shall be replaced by 'namespace' launch argument
